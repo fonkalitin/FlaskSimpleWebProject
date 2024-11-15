@@ -1,24 +1,42 @@
 
+# coding=windows-1251
+
+from ast import Str
 from os import write
 from subprocess import CREATE_NEW_CONSOLE
 from flask import Flask
-from flask import flask_restful
-from flask import Api, Resource, request
+#from flask import flask_restful
+#from flask import Api, Resource, request
+from flask import request
 app = Flask(__name__)
 
 # Make the WSGI interface available at the top level so wfastcgi can get it. 
 wsgi_app = app.wsgi_app
 
 
-@app.route('/convertTank')
-def hello():
-    return getFunc
+@app.route('/convertTank', methods=['GET'])
+def getVal():
+    try:
+        getValues =  request.args.get('value', 0) # получение значения из запроса
+        getValuesList = getValues.split(',')
+        D = getValuesList[0]
+        h_otb = getValuesList[1] 
+        L = getValuesList[2] 
+        h_dn = getValuesList[3] 
+        h_ur =getValuesList[4] 
+
+        returnedValue = tank_h(D, h_otb, L, h_dn, h_ur) #','.join(tank_h(D, h_otb, L, h_dn, h_ur))  # тут вызов нужной функции-обработчика и получение из нее значения value
+
+        return returnedValue, 200, {'Content-Type': 'text/plain'} # метод возвращает HTTP-статус 200 в случае успешного запроса.
+    except ValueError:
+        return "Error.", 400 # метод возвращает HTTP-статус 404 в случае если запись не найдена.
+ 
 
 
-def tank_h(D,h_otb,L,h_dn,h_ur):
-    D = 1;
-    print(D,h_otb,L,h_dn,h_ur)
-    return("Function return: ", D)
+def tank_h(D, h_otb, L, h_dn, h_ur):  #h_otb,L,h_dn,h_ur
+    #D = 1;
+    print(D)
+    return("Функция вернула следующий набор значений: ", D, h_otb, L, h_dn, h_ur)
 
 def getList():
 
@@ -38,14 +56,12 @@ def getFunc():
     try:
         getValues =  request.args.get('value', 0) # получение значения из запроса
         #getValuesList = getValues.split(',')
-        #returnedValue = tank_h(getValues) # тут вызов нужной функции-обработчика и получение из нее значения value
+        returnedValue = tank_h(getValues) # тут вызов нужной функции-обработчика и получение из нее значения value
 
-        return tank_h(getValues), 200 # метод возвращает HTTP-статус 200 в случае успешного запроса.
+        return returnedValue, 200 # метод возвращает HTTP-статус 200 в случае успешного запроса.
     except ValueError:
         return "Error.", 400 # метод возвращает HTTP-статус 404 в случае если запись не найдена.
  
-
-
 
 if __name__ == '__main__':
     import os
@@ -58,3 +74,4 @@ if __name__ == '__main__':
 
 
     # /convertTank/?value=1,2,3,4,5
+
